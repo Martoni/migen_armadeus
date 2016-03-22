@@ -12,14 +12,8 @@ plat = apf6sp.Platform()
 plat.add_extension(ios)
 led = plat.request("user_led", 0)  # led pin on apf6sp_dev
 
-m = Module()
-plat.adding_pll_pcie_clk(m) # need a PLL on main clock
+m = apf6sp.PciePllClockedModule(platform=plat)
 counter = Signal(26)
 m.comb += led.eq(counter[25])
 m.sync += counter.eq(counter + 1)
 
-plat.build(m)
-
-#XXX generate the rbf, should be integrated in platform build
-import os
-os.system("quartus_cpf -c build/top.sof top.rbf")
